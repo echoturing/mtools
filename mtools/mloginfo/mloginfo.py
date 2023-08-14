@@ -3,10 +3,15 @@
 import datetime
 import inspect
 import sys
+import pytz
 
 import mtools.mloginfo.sections as sections
 from mtools.util.cmdlinetool import LogFileTool
 from mtools.util.logformat import LogFormat
+
+
+utc_tz = pytz.timezone('UTC')
+
 
 class MLogInfoTool(LogFileTool):
 
@@ -55,11 +60,11 @@ class MLogInfoTool(LogFileTool):
                             if self.logfile.start else "unknown")
             else:
                 # include milliseconds
-                start_time = (self.logfile.start.strftime("%Y %b %d "
-                                                          "%H:%M:%S.%f")[:-3]
+                start_time = (self.logfile.start.astimezone(utc_tz).strftime("%Y-%m-%d "
+                                                          "%H:%M:%S")
                               if self.logfile.start else "unknown")
-                end_time = (self.logfile.end.strftime("%Y %b %d "
-                                                      "%H:%M:%S.%f")[:-3]
+                end_time = (self.logfile.end.astimezone(utc_tz).strftime("%Y-%m-%d "
+                                                      "%H:%M:%S")
                             if self.logfile.start else "unknown")
 
             print(f"     source: {self.logfile.name}")
@@ -82,7 +87,7 @@ class MLogInfoTool(LogFileTool):
                 timezone = tzdt.tzname()
             else:
                 timezone = f"UTC {tzdt.strftime('%z')}"
-            print(f"   timezone: {timezone}")
+            print(f"   timezone: {utc_tz.zone}")
             print(f"     length: {len(self.logfile)}")
             print(f"     binary: %s" % (self.logfile.binary or "unknown"))
             if self.logfile.clusterrole:

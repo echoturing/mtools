@@ -41,3 +41,5 @@ _build
 # local testing
 logs/
 logv2/
+
+.idea

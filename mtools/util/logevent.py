@@ -4,6 +4,7 @@ import json
 import re
 import sys
 from datetime import datetime
+from json import JSONDecodeError
 
 import dateutil.parser
 from dateutil.tz import tzutc
@@ -526,6 +527,12 @@ class LogEvent(object):
             s = None
             if sort_str:
                 s = add_double_quotes_to_key(sort_str)
+                try:
+                    # when _find_pattern get a filter with sort query like `sort: "sort_value1"`, it will return ` "sort_value1"` }`
+                    # so we just simply loads it to json, if we get JSONDecodeError , sort is None
+                    json.loads(s)
+                except JSONDecodeError as e:
+                    s = None
             self._sort = s
         return self._sort
 

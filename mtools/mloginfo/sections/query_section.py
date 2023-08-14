@@ -1,3 +1,4 @@
+import json
 from collections import namedtuple
 from operator import itemgetter
 
@@ -108,6 +109,7 @@ class QuerySection(BaseSection):
                   'max (ms)', '95%-ile (ms)', 'sum (ms)', 'mean (ms)',
                   'allowDiskUse']
         table_rows = []
+        values = []
 
         for g in grouping:
             # calculate statistics for this group
@@ -135,6 +137,7 @@ class QuerySection(BaseSection):
                              if group_events else 0)
             stats['allowDiskUse'] = allowDiskUse
             table_rows.append(stats)
+            values.append(list(stats.values())[:-1])
 
         # sort order depending on field names
         reverse = True
@@ -144,5 +147,7 @@ class QuerySection(BaseSection):
         table_rows = sorted(table_rows,
                             key=itemgetter(self.mloginfo.args['sort']),
                             reverse=reverse)
-        print_table(table_rows, titles, uppercase_headers=False)
+        print(json.dumps(values))
+
+        # print_table(table_rows, titles, uppercase_headers=False)
         print('')
